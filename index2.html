@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Example: Display JSON Data to HTML Table</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+  /* CSS styles for the page */
+  body {
+    font-family: Arial, sans-serif;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px double #ddd;
+  }
+
+  th, td {
+    padding: 10px 15px;
+    text-align: left;
+    color: #fff; /* Set the text color for table cells */
+    border: 2px double #ddd;
+    background-color: #454b4e; /* Set your desired color here */
+    font-size: 24px;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    color: #333; /* Set the text color for table headers */
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover {
+    background-color: #f5f5f5;
+  }
+  </style>
+</head>
+<body>
+  <h1>JSON Data to HTML Table</h1>
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>Total</th>
+        <th>Max Results</th>
+        <th>Key</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <!-- JavaScript code using jQuery -->
+  <script>
+    $(document).ready(function() {
+      // Retrieve JSON data from "testcases.json" file
+      $.getJSON("data/testcases.json", function(data) {
+        var tableBody = $("#data-table tbody");
+
+        // Create a new table row
+        var row = $("<tr></tr>");
+        
+        // Iterate over each person object in the JSON values array
+        $.each(data.values, function(index, values) {
+          row.append($("<td></td>").text(values.key));
+          row.append($("<td></td>").text(values.name));
+		  row.append($("<td></td>").text(values.customFields["TCM3 ID"]));
+
+          tableBody.append(row); // Add the row to the table body
+          row = $("<tr></tr>"); // Create a new row for the next item
+        });
+      });
+    });
+  </script>
+</body>
+</html>

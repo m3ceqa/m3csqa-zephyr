@@ -1,0 +1,32 @@
+body {
+  background-color: rgb(235, 235, 235);
+  background-size: auto;
+  font-family: 'Montserrat'
+}
+
+.container {
+  height: 90vh;
+  width: 90vw;
+}
+
+table {
+  table-layout: fixed;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: black;
+  color: white;
+  white-space: nowrap;
+}
+
+tbody td {
+  word-wrap: break-word;
+  white-space: normal !important;
+}
+
+tr a {
+  color: black;
+  text-decoration: none;
+}
