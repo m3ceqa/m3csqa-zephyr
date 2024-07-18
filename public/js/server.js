@@ -48,7 +48,8 @@ const port = process.env.PORT || 4000; // Use PORT environment variable if set, 
 const app = express();
 
 // Middleware to serve static files from the root directory
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..')));
 // app.use(express.static('public'));
 // app.use(express.static(path.join(__dirname)));
 
@@ -67,7 +68,8 @@ app.use('/api/statuses', statusesRoutes);
 // Serve index.html from the root
 app.get('*', (req, res) => {
     // res.sendFile(path.resolve(__dirname, 'index.html'));
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    // res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '..', 'index.html'));
     // res.sendFile(path.resolve('', 'index.html'));
 });
 
