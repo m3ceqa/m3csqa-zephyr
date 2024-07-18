@@ -14,6 +14,29 @@ $(document).ready(function () {
         }
     });
 
+    // Initialize an empty cache object
+    var folderCache = {};
+    var folderApiUrl = "/api/folder";
+
+    // Fetch folders and save to cache
+    $.ajax({
+        url: folderApiUrl,
+        method: "GET",
+        cache: true, // Enable caching
+        success: function (folderData) {
+            // Save the response to folderCache
+            folderCache = folderData;
+            // Optionally, you can process the folderData or trigger other actions
+            console.log("Request URL:", folderApiUrl);
+            console.log("Folder data cached:", folderCache);
+        },
+        error: function (xhr, status, error) {
+            // Handle errors if any
+            console.error("Error fetching folder data:", error);
+        }
+    });
+
+
     // Populate the table with test cases data
     function populateTable(values) {
         var tableBody = $("#data-table tbody");
@@ -39,12 +62,12 @@ $(document).ready(function () {
             row.append($("<td></td>").text(values.customFields["Framework"]));
             // Check if values.folder is not null before accessing 'id'
             var folderId = values.folder ? values.folder.id : '';
-            row.append($("<td></td>").text(folderId));
-            // row.append(
-            //     $("<td></td>")
-            //         .text("Loading...")
-            //         .attr("id", "folder-" + index)
-            // );
+            // row.append($("<td></td>").text(folderId));
+            row.append(
+                $("<td></td>")
+                    .text("Loading...")
+                    .attr("id", "folder-" + index)
+            );
             
             row.append($("<td></td>").text(values.customFields["Epic Key"]));
             row.append($("<td></td>").text(values.customFields["Automated Test Failure Reason"]));
@@ -52,7 +75,7 @@ $(document).ready(function () {
             tableBody.append(row); // Add the row to the table body
 
             // Fetch folder name
-            // fetchFolderName(values, index);
+            fetchFolderName(values.folder, index);
         });
 
         // Initialize DataTables with sorting enabled and individual column searching
@@ -61,6 +84,9 @@ $(document).ready(function () {
             columnDefs: [{
                 targets: '_all', // Apply sorting to all columns
                 orderable: true // Enable sorting on all columns
+            }, {
+                targets: '#searchRow th', // Target the search row headers
+                orderable: false // Disable sorting for search row headers
             }]
         });
 
@@ -71,39 +97,25 @@ $(document).ready(function () {
         });
     }
 
-    // Fetch folder name from the API
-    function fetchFolderName(values, index) {
-        var apiUrl = "/api/folders/" + values.folder["id"];
-        console.log("Request URL:", apiUrl); // Logging the request URL
+    // Fetch folder name from the cache
+    function fetchFolderName(folder, index) {
+        var folderName = '';
+        $.each(folderCache.values, function (idx, folderItem) {
+            if (folderItem.id === folder.id) {
+                folderName = folderItem.name;
+                return false; // Exit the loop once found
+            }
+        });
 
-        if (values.folder && values.folder["id"]) {
-            // Fetch folder name from the API
-            $.ajax({
-                url: apiUrl,
-                method: "GET",
-                success: function (folderData) {
-                    var folderName = folderData.name; // Assuming the response contains a 'name' field
-                    $("#folder-" + index).text(folderName);
-
-                    // After updating the folder name, if using DataTables, redraw the table
-                    if ($.fn.DataTable.isDataTable('#data-table')) {
-                        $('#data-table').DataTable().rows().invalidate().draw();
-                    }
-                },
-                error: function () {
-                    $("#folder-" + index).text("Error");
-                },
-            });
-        } else {
-            $("#folder-" + index).text("No Folder");
-        }
+        // Update the table row with the folder name
+        $("#folder-" + index).text(folderName || "Folder not found");
     }
 
     // Search using top search bar
-    $("#myInput").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
-        $("#data-table tr").filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-    });
+    // $("#myInput").on("keyup", function () {
+    //     var value = $(this).val().toLowerCase();
+    //     $("#data-table tr").filter(function () {
+    //         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    //     });
+    // });
 });
