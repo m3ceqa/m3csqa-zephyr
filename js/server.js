@@ -66,8 +66,8 @@ app.use('/api/statuses', statusesRoutes);
 
 // Serve index.html from the root
 app.get('*', (req, res) => {
-    // res.sendFile(path.resolve(__dirname, 'index.html'));
-    res.sendFile(path.resolve('', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'index.html'));
+    // res.sendFile(path.resolve('', 'index.html'));
 });
 
 // Start server
