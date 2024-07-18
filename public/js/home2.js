@@ -91,7 +91,7 @@ $(document).ready(function () {
 
         // Initialize DataTables with sorting enabled and individual column searching
         var dataTable = $('#data-table').DataTable({
-            ordering: false, // Enable ordering (sorting)
+            ordering: true, // Enable ordering (sorting)
             columnDefs: [{
                 targets: '_all', // Apply sorting to headers inside #headersLabels
                 orderable: true // Enable sorting on these headers
@@ -178,14 +178,38 @@ $(document).ready(function () {
                 var val = $.fn.dataTable.util.escapeRegex(
                     $(this).val()
                 );
+                if (val === '') {
+                    // Filter for blanks
+                    columnQualificationLevel.search('^$', true, false).draw();
+                } else {
+                    // Filter for selected value
+                    columnQualificationLevel.search(val).draw();
+                }
 
-                columnQualificationLevel.search(val ? val : '', true, false).draw();
+                // columnQualificationLevel.search(val ? val : '', true, false).draw();
 
             });
 
         // Add options to the dropdown
         $.each(qualificationLevels, function (index, value) {
             selectQualificationLevel.append('<option value="' + value + '">' + value + '</option>');
+        });
+
+        // Populate dropdown options for Epic column
+        var columnEpic = dataTable.column(8); // Epic column index is 2 (zero-based index)
+        var selectEpic = $('<select class="form-control form-control-sm"><option value="">Select Epic</option></select>')
+            .appendTo($('#searchRow th:nth-child(9)')) // Append dropdown to Epic column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                columnEpic.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Include blank filter
+
+            });
+
+        columnEpic.data().unique().sort().each(function (d, j) {
+            selectEpic.append('<option value="' + d + '">' + d + '</option>');
         });
 
         // Apply individual column searching
