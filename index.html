@@ -4,77 +4,88 @@
 <head>
     <title>M3CSQA Zephyr Search</title>
 
-    <link rel="stylesheet" href="./public/css/home.css">
-    <!-- <link rel="stylesheet" href="./css/home.css"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- <link rel="stylesheet" href="./public/css/home.css"> -->
+    <link rel="stylesheet" href="./css/home.css">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
-    <script src="./public/js/home2.js"></script>
-    <!-- <script src="./js/home2.js"></script> -->
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+    <!-- <script src="./public/js/home2.js"></script> -->
+    <script src="./js/home2.js"></script>
+
 </head>
 
 <body>
     <!-- <div class="p-3">
         <input class="form-control" id="myInput" type="text" placeholder="Search..">
     </div> -->
-    <div class="table-responsive p-3">
-        <div id="loading" class="text-center">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+    <div class="container-fluid">
+        <div class="table-responsive p-3">
+            <div id="loading" class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading data...</p>
             </div>
-            <p>Loading data...</p>
-        </div>
-        <div class="d-grid gap-2 d-md-block mb-3">
-            <button id="filterPreconditions" class="btn btn-primary" type="button">Filter Preconditions</button>
-            <button id="filterMain" class="btn btn-primary" type="button">Filter Main</button>
-            <button id="resetFilters" class="btn btn-secondary" type="button">Reset</button>
-            <button id="refreshPageBtn" class="btn btn-dark"><i class="bi bi-arrow-clockwise"></i></button>
-        </div>
-        <table class="table table-striped dataTable" id="data-table">
-            <thead>
-                <tr id ="headersLabels">
-                    <th>M3QA ID</th>
-                    <th>TCM3 ID</th>
-                    <th>Test Type</th>
-                    <th>Summary</th>
-                    <th>Qualification Level</th>
-                    <th>Labels</th>
-                    <th>Framework</th>
-                    <th>Folder</th>
-                    <th>Epic</th>
-                    <th>AUTO-XXX</th>
-                </tr>
+            <div class="d-grid gap-2 d-md-block mb-3">
+                <button id="filterPreconditions" class="btn btn-primary" type="button">Preconditions</button>
+                <button id="filterMain" class="btn btn-primary" type="button">Main</button>
+                <button id="resetFilters" class="btn btn-secondary" type="button">Clear</button>
+                <button id="refreshPageBtn" class="btn btn-dark"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <table class="table table-striped dataTable" id="data-table">
+                <thead>
+                    <tr id="headersLabels" class="table-dark">
+                        <th scope="col">M3QA ID</th>
+                        <th scope="col">TCM3 ID</th>
+                        <th scope="col">Test Type</th>
+                        <th scope="col">Summary</th>
+                        <th scope="col">QL</th>
+                        <th scope="col">Labels</th>
+                        <th scope="col">Framework</th>
+                        <th scope="col">Folder</th>
+                        <th scope="col">Epic</th>
+                        <th scope="col">AUTO-XXX</th>
+                        <!-- <th>Status</th> -->
+                    </tr>
 
-                <tr id="searchRow">
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search M3QA ID" /></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search TCM3 ID" /></th>
-                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Test Type" /></th> -->
-                    <th></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search Summary" /></th>
-                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Qualification Level" /></th> -->
-                    <th></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search Labels" /></th>
-                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Framework" /></th> -->
-                    <th></th>
-                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Folder" /></th> -->
-                    <th></th>
-                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Epic" /></th> -->
-                    <th></th>
-                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search AUTO-XXX" /></th> -->
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+                    <tr id="searchRow">
+                        <th><input type="text" class="form-control form-control-sm" placeholder="Search M3QA ID" /></th>
+                        <th><input type="text" class="form-control form-control-sm" placeholder="Search TCM3 ID" /></th>
+                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Test Type" /></th> -->
+                        <th></th>
+                        <th><input type="text" class="form-control form-control-sm" placeholder="Search Summary" /></th>
+                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Qualification Level" /></th> -->
+                        <th></th>
+                        <th><input type="text" class="form-control form-control-sm" placeholder="Search Labels" /></th>
+                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Framework" /></th> -->
+                        <th></th>
+                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Folder" /></th> -->
+                        <th></th>
+                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Epic" /></th> -->
+                        <th></th>
+                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search AUTO-XXX" /></th> -->
+                        <th></th>
+                        <!-- <th></th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 
