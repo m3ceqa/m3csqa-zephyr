@@ -1,0 +1,42 @@
+body {
+  background-color: rgb(235, 235, 235);
+  background-size: auto;
+  font-family: 'Montserrat'
+}
+
+.table-responsive {
+  overflow-x: hidden;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th, td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+}
+
+tbody td {
+  word-wrap: break-word;
+  white-space: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+tr a {
+  color: black;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
