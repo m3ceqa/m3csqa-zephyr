@@ -53,10 +53,10 @@ const app = express();
 app.use(express.static(path.join(__dirname)));
 
 // Import route modules (assuming these are correctly defined in their respective files)
-const testcaseRoutes = require('../routes/testcase'); // Adjust the path as per your project structure
-const folderRoutes = require('../routes/folders'); // Adjust the path as per your project structure
-const foldersRoutes = require('../routes/folder');
-const statusesRoutes = require('../routes/statuses');
+const testcaseRoutes = require('./routes/testcase'); // Adjust the path as per your project structure
+const folderRoutes = require('./routes/folders'); // Adjust the path as per your project structure
+const foldersRoutes = require('./routes/folder');
+const statusesRoutes = require('./routes/statuses');
 
 // Routes
 app.use('/api/testcases', testcaseRoutes);
