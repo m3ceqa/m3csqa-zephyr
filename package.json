@@ -1,5 +1,7 @@
 {
-  "homepage": "https://m3ceqa.github.io/m3csqa-zephyr/",
+  "name": "m3csqa-zephyr",
+  "version": "1.0.0",
+  "main": "public/js/server.js",
   "dependencies": {
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
@@ -9,7 +11,6 @@
     "gh-pages": "^6.1.1"
   },
   "scripts": {
-    "build": "npm run build",
-    "deploy": "gh-pages -d build"
+    "start": "node server.js"
   }
 }
