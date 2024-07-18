@@ -49,8 +49,8 @@ const app = express();
 
 // Middleware to serve static files from the root directory
 // app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static('public'));
-// app.use(express.static(path.join(__dirname)));
+// app.use(express.static('public'));
+app.use(express.static(path.join(__dirname)));
 
 // Import route modules (assuming these are correctly defined in their respective files)
 const testcaseRoutes = require('../routes/testcase'); // Adjust the path as per your project structure
