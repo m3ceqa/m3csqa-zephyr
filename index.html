@@ -34,10 +34,11 @@
             <button id="filterPreconditions" class="btn btn-primary" type="button">Filter Preconditions</button>
             <button id="filterMain" class="btn btn-primary" type="button">Filter Main</button>
             <button id="resetFilters" class="btn btn-secondary" type="button">Reset</button>
+            <button id="refreshPageBtn" class="btn btn-dark"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
         <table class="table table-striped dataTable" id="data-table">
             <thead>
-                <tr>
+                <tr id ="headersLabels">
                     <th>M3QA ID</th>
                     <th>TCM3 ID</th>
                     <th>Test Type</th>
@@ -53,14 +54,19 @@
                 <tr id="searchRow">
                     <th><input type="text" class="form-control form-control-sm" placeholder="Search M3QA ID" /></th>
                     <th><input type="text" class="form-control form-control-sm" placeholder="Search TCM3 ID" /></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search Test Type" /></th>
+                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Test Type" /></th> -->
+                    <th></th>
                     <th><input type="text" class="form-control form-control-sm" placeholder="Search Summary" /></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search Qualification Level" /></th>
+                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Qualification Level" /></th> -->
+                    <th></th>
                     <th><input type="text" class="form-control form-control-sm" placeholder="Search Labels" /></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search Framework" /></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search Folder" /></th>
+                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Framework" /></th> -->
+                    <th></th>
+                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Folder" /></th> -->
+                    <th></th>
                     <th><input type="text" class="form-control form-control-sm" placeholder="Search Epic" /></th>
-                    <th><input type="text" class="form-control form-control-sm" placeholder="Search AUTO-XXX" /></th>
+                    <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search AUTO-XXX" /></th> -->
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

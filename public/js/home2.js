@@ -1,5 +1,10 @@
 $(document).ready(function () {
 
+    // Refresh Button Click Event
+    $('#refreshPageBtn').on('click', function () {
+        location.reload(); // Reload the entire page
+    });
+
     // Show loading indicator
     $('#loading').show();
 
@@ -86,14 +91,101 @@ $(document).ready(function () {
 
         // Initialize DataTables with sorting enabled and individual column searching
         var dataTable = $('#data-table').DataTable({
-            ordering: true, // Enable ordering (sorting)
+            ordering: false, // Enable ordering (sorting)
             columnDefs: [{
-                targets: '_all', // Apply sorting to all columns
-                orderable: true // Enable sorting on all columns
+                targets: '_all', // Apply sorting to headers inside #headersLabels
+                orderable: true // Enable sorting on these headers
             }, {
                 targets: '#searchRow th', // Target the search row headers
                 orderable: false // Disable sorting for search row headers
             }]
+        });
+
+        // Populate dropdown options for Test Type column
+        var columnTestType = dataTable.column(2); // Test Type column index is 2 (zero-based index)
+        var selectTestType = $('<select class="form-control form-control-sm"></select>')
+            .appendTo($('#searchRow th:nth-child(3)')) // Append dropdown to Test Type column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                columnTestType.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Include blank filter
+
+            });
+
+            columnTestType.data().unique().sort().each(function (d, j) {
+            selectTestType.append('<option value="' + d + '">' + d + '</option>');
+        });
+
+        // Populate dropdown options for Framework column
+        var columnFramework = dataTable.column(6); // Framework column index is 2 (zero-based index)
+        var selectFramework = $('<select class="form-control form-control-sm" ></select>')
+            .appendTo($('#searchRow th:nth-child(7)')) // Append dropdown to Framework column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                columnFramework.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Include blank filter
+
+            });
+
+        columnFramework.data().unique().sort().each(function (d, j) {
+            selectFramework.append('<option value="' + d + '">' + d + '</option>');
+        });
+
+        // Populate dropdown options for Framework column
+        var columnFolder = dataTable.column(7); // Framework column index is 2 (zero-based index)
+        var selectFolder = $('<select class="form-control form-control-sm"><option value="">Select Folder</option></select>')
+            .appendTo($('#searchRow th:nth-child(8)')) // Append dropdown to Framework column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                columnFolder.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Include blank filter
+
+            });
+        
+        columnFolder.data().unique().sort().each(function (d, j) {
+            selectFolder.append('<option value="' + d + '">' + d + '</option>');
+        });
+
+        // Populate dropdown options for AUTO-XXX column
+        var columnAuto = dataTable.column(9); // AUTO-XXX column index is 2 (zero-based index)
+        var selectAuto = $('<select class="form-control form-control-sm"></select>')
+            .appendTo($('#searchRow th:nth-child(10)')) // Append dropdown to AUTO-XXX column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                columnAuto.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Include blank filter
+
+            });
+
+        columnAuto.data().unique().sort().each(function (d, j) {
+            selectAuto.append('<option value="' + d + '">' + d + '</option>');
+        });
+
+        // Populate dropdown options for Qualification Level column
+        var qualificationLevels = ['','2', '3', '4', '6', '7']; // Hard-coded options
+        var columnQualificationLevel = dataTable.column(4); // Qualification Level column index is 4 (zero-based index)
+        var selectQualificationLevel = $('<select class="form-control form-control-sm"></select>')
+            .appendTo($('#searchRow th:nth-child(5)')) // Append dropdown to Qualification Level column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                );
+
+                columnQualificationLevel.search(val ? val : '', true, false).draw();
+
+            });
+
+        // Add options to the dropdown
+        $.each(qualificationLevels, function (index, value) {
+            selectQualificationLevel.append('<option value="' + value + '">' + value + '</option>');
         });
 
         // Apply individual column searching
@@ -136,6 +228,7 @@ $(document).ready(function () {
         $('#resetFilters').on('click', function () {
             dataTable.search('').columns().search('').draw();
             $('#searchRow input').val(''); // Clear search input fields
+            $('#searchRow select').val(''); // Clear dropdown selections
             notMainFilterActive = false; // Reset the notMain filter state
         });
     }
