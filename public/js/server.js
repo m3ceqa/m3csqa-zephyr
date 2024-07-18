@@ -56,11 +56,13 @@ app.use(express.static('public'));
 const testcaseRoutes = require('../routes/testcase'); // Adjust the path as per your project structure
 const folderRoutes = require('../routes/folders'); // Adjust the path as per your project structure
 const foldersRoutes = require('../routes/folder');
+const statusesRoutes = require('../routes/statuses');
 
 // Routes
 app.use('/api/testcases', testcaseRoutes);
 app.use('/api/folders', folderRoutes);
 app.use('/api/folder', foldersRoutes);
+app.use('/api/statuses', statusesRoutes);
 
 // Serve index.html from the root
 app.get('*', (req, res) => {

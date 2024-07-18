@@ -40,9 +40,3 @@ tr a {
 a:hover {
   text-decoration: none;
 }
-
-/* Add this to your CSS file */
-.button-active {
-  background-color: #4CAF50; /* Green background */
-  color: white; /* White text */
-}

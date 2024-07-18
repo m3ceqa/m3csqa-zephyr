@@ -25,27 +25,40 @@ $(document).ready(function () {
         }
     });
 
-    // Initialize an empty cache object
+    // Cache Folders
     var folderCache = {};
     var folderApiUrl = "/api/folder";
+    fetchAndCacheResponseData(folderApiUrl, folderCache);
 
-    // Fetch folders and save to cache
-    $.ajax({
-        url: folderApiUrl,
-        method: "GET",
-        cache: true, // Enable caching
-        success: function (folderData) {
-            // Save the response to folderCache
-            folderCache = folderData;
-            // Optionally, you can process the folderData or trigger other actions
-            console.log("Request URL:", folderApiUrl);
-            console.log("Folder data cached:", folderCache);
-        },
-        error: function (xhr, status, error) {
-            // Handle errors if any
-            console.error("Error fetching folder data:", error);
-        }
-    });
+    // Cache Folders
+    var statusesCache = {};
+    var statusesApiUrl = "/api/statuses";
+    fetchAndCacheResponseData(statusesApiUrl, statusesCache);
+
+    function fetchAndCacheResponseData(ApiUrl, cacheData) {
+        $.ajax({
+            url: ApiUrl,
+            method: "GET",
+            cache: true, // Enable caching
+            success: function (respData) {
+                // Ensure cacheData is an object (not a string)
+                if (typeof cacheData === 'object' && cacheData !== null) {
+                    // Update cacheData with respData
+                    Object.assign(cacheData, respData);
+                    // Optionally, you can process the respData or trigger other actions
+                    console.log("Request URL:", ApiUrl);
+                    console.log("Data cached:", cacheData);
+                } else {
+                    // console.log("Data cached:", respData);
+                    console.error("Error: cacheData is not an object or is null.");
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors if any
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
 
 
     // Populate the table with test cases data
@@ -84,17 +97,26 @@ $(document).ready(function () {
             
             row.append($("<td></td>").text(values.customFields["Epic Key"]));
             row.append($("<td></td>").text(values.customFields["Automated Test Failure Reason"]));
-            // row.append($("<td></td>").text(values.status));
+            row.append(
+                $("<td></td>")
+                    .text("Loading...")
+                    .attr("id", "status-" + index)
+            );
 
             tableBody.append(row); // Add the row to the table body
 
             // Fetch folder name
             fetchFolderName(values.folder, index);
+            fetchStatusName(values.status, index)
         });
 
         // Initialize DataTables with sorting enabled and individual column searching
         var dataTable = $('#data-table').DataTable({
             ordering: true, // Enable ordering (sorting)
+            language: {
+                searchPlaceholder: "Search records",
+                search: "",
+            },
             columnDefs: [{
                 targets: '_all', // Apply sorting to headers inside #headersLabels
                 orderable: true // Enable sorting on these headers
@@ -107,21 +129,24 @@ $(document).ready(function () {
         // Populate dropdown options for Test Type column
         createDropdownFilter(dataTable, 2, 2, 'Select Test Type');
 
-        // Populate dropdown options for Framework column
-        createDropdownFilter(dataTable, 6, 6, 'Select Framework');
-
-        // Populate dropdown options for Framework column
-        createDropdownFilter(dataTable, 7, 7, 'Select Folder');
-
-        // Populate dropdown options for AUTO-XXX column
-        createDropdownFilter(dataTable, 9, 9, 'Select Failure');
-
         // Populate dropdown options for Qualification Level column
         var qualificationLevels = ['', '2', '3', '4', '6', '7']; // Hard-coded options
         createDropdownFilterWithOptions(dataTable, 4, 4, 'Select QL', qualificationLevels);
 
+        // Populate dropdown options for Framework column
+        createDropdownFilter(dataTable, 6, 6, 'Select Framework');
+
+        // Populate dropdown options for Folder column
+        createDropdownFilter(dataTable, 7, 7, 'Select Folder');
+
         // Populate dropdown options for Epic column
         createDropdownFilter(dataTable, 8, 8, 'Select Epic');
+
+        // Populate dropdown options for AUTO-XXX column
+        createDropdownFilter(dataTable, 9, 9, 'Select Failure');
+
+        // Populate dropdown options for Status column
+        createDropdownFilter(dataTable, 10, 10, 'Select Status');
 
         // Apply individual column searching
         $('#searchRow input').on('keyup change', function () {
@@ -152,12 +177,10 @@ $(document).ready(function () {
                 // Reset filter to show all records
                 dataTable.column(7).search('').draw();
                 notMainFilterActive = false;
-                $(this).removeClass('button-active'); // Remove the active class
             } else {
                 // Apply filter to show records not containing 'M3 - Preconditions'
                 dataTable.column(7).search('^(?!.*' + filterValue + ').*$' , true, false).draw();
                 notMainFilterActive = true;
-                $(this).addClass('button-active'); // Remove the active class
             }
         });
 
@@ -218,6 +241,20 @@ $(document).ready(function () {
 
         // Update the table row with the folder name
         $("#folder-" + index).text(folderName || "Folder not found");
+    }
+
+    // Fetch status name from the cache
+    function fetchStatusName(status, index) {
+        var statusName = '';
+        $.each(statusesCache.values, function (idx, statusItem) {
+            if (statusItem.id === status.id) {
+                statusName = statusItem.name;
+                return false; // Exit the loop once found
+            }
+        });
+
+        // Update the table row with the folder name
+        $("#status-" + index).text(statusName || "Status not found");
     }
 
     // Search using top search bar
