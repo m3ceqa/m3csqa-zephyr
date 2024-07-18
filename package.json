@@ -1,7 +1,11 @@
 {
+  "homepage": "https://m3ceqa.github.io/m3csqa-zephyr/",
   "dependencies": {
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   }
 }
