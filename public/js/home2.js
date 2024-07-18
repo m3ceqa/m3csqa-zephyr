@@ -1,4 +1,8 @@
 $(document).ready(function () {
+
+    // Show loading indicator
+    $('#loading').show();
+
     var apiUrl = "/api/testcases";
     console.log("Request URL:", apiUrl); // Logging the request URL
 
@@ -8,9 +12,11 @@ $(document).ready(function () {
         method: "GET",
         success: function (data) {
             populateTable(data.values);
+            $('#loading').hide();
         },
         error: function () {
             alert("Failed to fetch data from the API.");
+            $('#loading').hide();
         }
     });
 
@@ -94,6 +100,43 @@ $(document).ready(function () {
         $('#searchRow input').on('keyup change', function () {
             var index = $(this).closest('th').index();
             dataTable.column(index).search(this.value).draw();
+        });
+
+        // Button click to filter M3 - Preconditions folder
+        $('#filterPreconditions').on('click', function () {
+            var filterValue = 'M3 - Preconditions';
+            var currentFilter = dataTable.column(7).search();
+            
+            if (currentFilter === filterValue) {
+                // If already filtered, reset to show all records
+                dataTable.column(7).search('').draw();
+            } else {
+                // Otherwise, apply the filter
+                dataTable.column(7).search(filterValue).draw();
+            }
+        });
+
+        // Button click to filter M3 - Preconditions folder
+        var notMainFilterActive = false; // Track if the notMain filter is active
+        $('#filterMain').on('click', function () {
+            var filterValue = 'M3 - Preconditions';
+
+            if (notMainFilterActive) {
+                // Reset filter to show all records
+                dataTable.column(7).search('').draw();
+                notMainFilterActive = false;
+            } else {
+                // Apply filter to show records not containing 'M3 - Preconditions'
+                dataTable.column(7).search('^(?!.*' + filterValue + ').*$' , true, false).draw();
+                notMainFilterActive = true;
+            }
+        });
+
+        // Button click to reset all filters
+        $('#resetFilters').on('click', function () {
+            dataTable.search('').columns().search('').draw();
+            $('#searchRow input').val(''); // Clear search input fields
+            notMainFilterActive = false; // Reset the notMain filter state
         });
     }
 
