@@ -11,6 +11,6 @@
     "gh-pages": "^6.1.1"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node public/js/server.js"
   }
 }
