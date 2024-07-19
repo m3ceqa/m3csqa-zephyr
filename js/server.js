@@ -49,14 +49,15 @@ const app = express();
 
 // Middleware to serve static files from the root directory
 // app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..')));
 // app.use(express.static('public'));
-app.use(express.static(path.join(__dirname)));
+// app.use(express.static(path.join(__dirname)));
 
 // Import route modules (assuming these are correctly defined in their respective files)
-const testcaseRoutes = require('./routes/testcase'); // Adjust the path as per your project structure
-const folderRoutes = require('./routes/folders'); // Adjust the path as per your project structure
-const foldersRoutes = require('./routes/folder');
-const statusesRoutes = require('./routes/statuses');
+const testcaseRoutes = require('../routes/testcase'); // Adjust the path as per your project structure
+const folderRoutes = require('../routes/folders'); // Adjust the path as per your project structure
+const foldersRoutes = require('../routes/folder');
+const statusesRoutes = require('../routes/statuses');
 
 // Routes
 app.use('/api/testcases', testcaseRoutes);
@@ -66,8 +67,9 @@ app.use('/api/statuses', statusesRoutes);
 
 // Serve index.html from the root
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'index.html'));
+    // res.sendFile(path.resolve(__dirname, 'index.html'));
     // res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '..', 'index.html'));
     // res.sendFile(path.resolve('', 'index.html'));
 });
 
