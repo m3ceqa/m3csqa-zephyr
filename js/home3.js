@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 require('dotenv').config(); // Load environment variables from .env file
 
 async function fetchTestCases() {
-    const url = 'https://cors-anywhere.herokuapp.com/https://api.zephyrscale.smartbear.com/v2/testcases';
+    const url = 'https://api.zephyrscale.smartbear.com/v2/testcases';
     const headers = {
         'Authorization': 'Bearer ${process.env.ZEPHYR_BEARER_TOKEN}',
         'Content-Type': 'application/json'
