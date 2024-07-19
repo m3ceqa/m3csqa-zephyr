@@ -49,8 +49,8 @@ const app = express();
 
 // Middleware to serve static files from the root directory
 // app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, '..')));
-// app.use(express.static('public'));
+// app.use(express.static(path.join(__dirname, '..')));
+app.use(express.static('public'));
 // app.use(express.static(path.join(__dirname)));
 
 // Import route modules (assuming these are correctly defined in their respective files)
@@ -69,8 +69,8 @@ app.use('/api/statuses', statusesRoutes);
 app.get('*', (req, res) => {
     // res.sendFile(path.resolve(__dirname, 'index.html'));
     // res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    res.sendFile(path.resolve(__dirname, '..', 'index.html'));
-    // res.sendFile(path.resolve('', 'index.html'));
+    // res.sendFile(path.resolve(__dirname, '..', 'index.html'));
+    res.sendFile(path.resolve('', 'index.html'));
 });
 
 // Start server
