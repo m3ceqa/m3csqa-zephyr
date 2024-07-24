@@ -78,6 +78,11 @@ $(document).ready(function () {
                 .attr("class", "text-decoration-none")
                 .attr("target", "_blank")
                 .text(values.customFields["TCM3 ID"]);
+            var epic_link = $("<a></a>")
+                .attr("href", "https://inforwiki.atlassian.net/browse/" + values.customFields["Epic Key"])
+                .attr("class", "text-decoration-none")
+                .attr("target", "_blank")
+                .text(values.customFields["Epic Key"]);
 
             row.append($("<td></td>").append(m3qa_link));
             row.append($("<td></td>").append(tcm3_link));
@@ -95,18 +100,24 @@ $(document).ready(function () {
                     .attr("id", "folder-" + index)
             );
             
-            row.append($("<td></td>").text(values.customFields["Epic Key"]));
+            row.append($("<td></td>").append(epic_link));
             row.append($("<td></td>").text(values.customFields["Automated Test Failure Reason"]));
             row.append(
                 $("<td></td>")
                     .text("Loading...")
                     .attr("id", "status-" + index)
             );
+            row.append($("<td></td>").text(values.customFields["One Time Setup"]));
+            row.append($("<td></td>").text(values.customFields["Test Objective"]));
 
             tableBody.append(row); // Add the row to the table body
 
             // Fetch folder name
-            fetchFolderName(values.folder, index);
+            if (values.folder != null) {
+                fetchFolderName(values.folder, index);
+            } else {
+                $("#folder-" + index).text("No folder");
+            }
             fetchStatusName(values.status, index)
         });
 
@@ -140,13 +151,16 @@ $(document).ready(function () {
         createDropdownFilter(dataTable, 7, 7, 'Select Folder');
 
         // Populate dropdown options for Epic column
-        createDropdownFilter(dataTable, 8, 8, 'Select Epic');
+        // createDropdownFilter(dataTable, 8, 8, 'Select Epic');
 
         // Populate dropdown options for AUTO-XXX column
         createDropdownFilter(dataTable, 9, 9, 'Select Failure');
 
         // Populate dropdown options for Status column
         createDropdownFilter(dataTable, 10, 10, 'Select Status');
+
+        // Populate dropdown options for Objective column
+        createDropdownFilter(dataTable, 12, 12, 'Select OBJ');
 
         // Apply individual column searching
         $('#searchRow input').on('keyup change', function () {
