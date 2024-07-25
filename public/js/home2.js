@@ -144,6 +144,9 @@ $(document).ready(function () {
         var qualificationLevels = ['', '2', '3', '4', '6', '7']; // Hard-coded options
         createDropdownFilterWithOptions(dataTable, 4, 4, 'Select QL', qualificationLevels);
 
+        // Populate dropdown options for Labels
+        createDropdownFilterWithComma(dataTable, 5, 5, 'Select Labels');
+
         // Populate dropdown options for Framework column
         createDropdownFilter(dataTable, 6, 6, 'Select Framework');
 
@@ -151,13 +154,16 @@ $(document).ready(function () {
         createDropdownFilter(dataTable, 7, 7, 'Select Folder');
 
         // Populate dropdown options for Epic column
-        // createDropdownFilter(dataTable, 8, 8, 'Select Epic');
+        createDropdownFilterWithLink(dataTable, 8, 8, 'Select Epic');
 
         // Populate dropdown options for AUTO-XXX column
         createDropdownFilter(dataTable, 9, 9, 'Select Failure');
 
         // Populate dropdown options for Status column
         createDropdownFilter(dataTable, 10, 10, 'Select Status');
+
+        // Populate dropdown options for OTS
+        createDropdownFilterWithComma(dataTable, 11, 11, 'Select OTS');
 
         // Populate dropdown options for Objective column
         createDropdownFilter(dataTable, 12, 12, 'Select OBJ');
@@ -218,6 +224,55 @@ $(document).ready(function () {
     
         column.data().unique().sort().each(function (d, j) {
             select.append('<option value="' + d + '">' + d + '</option>');
+        });
+    }
+
+    function createDropdownFilterWithComma(dataTable, columnIndex, headerIndex, placeholder) {
+        var column = dataTable.column(columnIndex); // Get the specified column
+        var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
+            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                column.search(val ? val : '', true, false).draw(); // Search using the value directly
+            });
+
+        // Collect unique values from column, splitting on commas, and removing duplicates
+        var uniqueValues = new Set();
+
+        column.data().each(function (data) {
+            var items = data.split(','); // Split the data on commas
+            items.forEach(item => {
+                uniqueValues.add(item.trim()); // Trim whitespace and add to set
+            });
+        });
+
+        // Convert set to sorted array and populate the dropdown
+        Array.from(uniqueValues).sort().forEach(function (value) {
+            select.append('<option value="' + value + '">' + value + '</option>');
+        });
+    }
+
+    function createDropdownFilterWithLink(dataTable, columnIndex, headerIndex, placeholder) {
+        var column = dataTable.column(columnIndex); // Get the specified column
+        var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
+            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
+            .on('change', function () {
+                var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                column.search(val ? '^' + val + '$' : '', true, false).draw(); // Exact match search
+            });
+    
+        // Collect unique Epic Key values
+        var uniqueValues = new Set();
+    
+        column.data().each(function (data) {
+            // Extract the text content from the link element if it's HTML
+            var text = $("<div>").html(data).text();
+            uniqueValues.add(text.trim()); // Trim whitespace and add to set
+        });
+    
+        // Convert set to sorted array and populate the dropdown
+        Array.from(uniqueValues).sort().forEach(function (value) {
+            select.append('<option value="' + value + '">' + value + '</option>');
         });
     }
 
