@@ -142,7 +142,8 @@ $(document).ready(function () {
 
         // Populate dropdown options for Qualification Level column
         var qualificationLevels = ['', '2', '3', '4', '6', '7']; // Hard-coded options
-        createDropdownFilterWithOptions(dataTable, 4, 4, 'Select QL', qualificationLevels);
+        // createDropdownFilterWithOptions(dataTable, 4, 4, 'Select QL', qualificationLevels);
+        createDropdownFilterWithComma(dataTable, 4, 4, 'Select QL');
 
         // Populate dropdown options for Labels
         createDropdownFilterWithComma(dataTable, 5, 5, 'Select Labels');
