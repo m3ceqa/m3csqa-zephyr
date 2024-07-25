@@ -60,7 +60,6 @@ $(document).ready(function () {
         });
     }
 
-
     // Populate the table with test cases data
     function populateTable(values) {
         var tableBody = $("#data-table tbody");
@@ -123,18 +122,26 @@ $(document).ready(function () {
 
         // Initialize DataTables with sorting enabled and individual column searching
         var dataTable = $('#data-table').DataTable({
-            ordering: true, // Enable ordering (sorting)
-            language: {
-                searchPlaceholder: "Search records",
-                search: "",
+            // responsive: true,
+            order: [],
+            layout: {
+                topStart: 'info',
+                topEnd: 'paging',
+                bottomStart: 'pageLength',
+                bottomEnd: null
             },
-            columnDefs: [{
-                targets: '_all', // Apply sorting to headers inside #headersLabels
-                orderable: true // Enable sorting on these headers
-            }, {
-                targets: '#searchRow th', // Target the search row headers
-                orderable: false // Disable sorting for search row headers
-            }]
+            // ordering: true, // Enable ordering (sorting)
+            orderCellsTop: true,
+            columnDefs: [
+                {
+                    targets: '_all', // Apply sorting to headers inside #headersLabels
+                    orderable: true // Enable sorting on these headers
+                }, 
+                {
+                    targets: '#searchRow th', // Target the search row headers
+                    orderable: false // Disable sorting for search row headers
+                }
+            ]
         });
 
         // Populate dropdown options for Test Type column
@@ -210,6 +217,7 @@ $(document).ready(function () {
             dataTable.search('').columns().search('').draw();
             $('#searchRow input').val(''); // Clear search input fields
             $('#searchRow select').val(''); // Clear dropdown selections
+            dataTable.order([]).draw(); // Clears sorting and redraws the table
             notMainFilterActive = false; // Reset the notMain filter state
         });
     }
@@ -230,28 +238,37 @@ $(document).ready(function () {
 
     function createDropdownFilterWithComma(dataTable, columnIndex, headerIndex, placeholder) {
         var column = dataTable.column(columnIndex); // Get the specified column
+    
+        // Create the dropdown and append it to the column header
         var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
-            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
+            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')'))
             .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? val : '', true, false).draw(); // Search using the value directly
+                var val = $(this).val();
+                if (val === '') {
+                    // Show all rows when the blank option is selected
+                    column.search('^$', true, false).draw(); // Use '^$' for empty values
+                } else {
+                    var escapedVal = $.fn.dataTable.util.escapeRegex(val);
+                    // Search for values that contain the selected option
+                    column.search(escapedVal, true, false).draw();
+                }
             });
-
-        // Collect unique values from column, splitting on commas, and removing duplicates
+    
+        // Collect unique values from the column, splitting on commas, and removing duplicates
         var uniqueValues = new Set();
-
+    
         column.data().each(function (data) {
             var items = data.split(','); // Split the data on commas
             items.forEach(item => {
                 uniqueValues.add(item.trim()); // Trim whitespace and add to set
             });
         });
-
+    
         // Convert set to sorted array and populate the dropdown
         Array.from(uniqueValues).sort().forEach(function (value) {
             select.append('<option value="' + value + '">' + value + '</option>');
         });
-    }
+    }    
 
     function createDropdownFilterWithLink(dataTable, columnIndex, headerIndex, placeholder) {
         var column = dataTable.column(columnIndex); // Get the specified column
@@ -259,7 +276,7 @@ $(document).ready(function () {
             .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
             .on('change', function () {
                 var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '', true, false).draw(); // Exact match search
+                column.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Exact match search
             });
     
         // Collect unique Epic Key values
@@ -327,6 +344,14 @@ $(document).ready(function () {
         $("#status-" + index).text(statusName || "Status not found");
     }
 
+    // Update badge based on Filtered (Main/Precondition/Reset)
+    // Set default text for filterResults
+    $('#filterResults').text('Filter: None');
+    $('.filter-btn').on('click', function () {
+        // Change the text of the filterResults element
+        $('#filterResults').text('Filter: ' + $(this).data('filter'));
+    });
+
     // Search using top search bar
     // $("#myInput").on("keyup", function () {
     //     var value = $(this).val().toLowerCase();
@@ -334,4 +359,6 @@ $(document).ready(function () {
     //         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     //     });
     // });
+
+    
 });
