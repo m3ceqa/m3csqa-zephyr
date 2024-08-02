@@ -1,5 +1,40 @@
 $(document).ready(function () {
 
+    // Show password modal on page load
+    const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    passwordModal.show();
+
+    // Password verification
+    const correctPassword = "bTNxYTIwMjQ=";
+
+    document.getElementById('passwordSubmit').addEventListener('click', function () {
+        handlePasswordCheck();
+    });
+    
+    document.getElementById('passwordInput').addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission if in a form
+            handlePasswordCheck();
+        }
+    });
+    
+    function handlePasswordCheck() {
+        const passwordInput = document.getElementById('passwordInput').value;
+
+        // Encode passwordInput to Base64
+        const base64PasswordInput = btoa(passwordInput);
+       
+        if (base64PasswordInput === correctPassword) {
+            // Hide modal and show page content
+            passwordModal.hide();
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('visible');
+        } else {
+            // Show feedback for incorrect password
+            document.getElementById('passwordFeedback').style.display = 'block';
+        }
+    }
+
     // Refresh Button Click Event
     $('#refreshPageBtn').on('click', function () {
         location.reload(); // Reload the entire page
@@ -136,9 +171,8 @@ $(document).ready(function () {
             order: [],
             layout: {
                 topStart: 'info',
-                topEnd: 'paging',
-                bottomStart: 'pageLength',
-                bottomEnd: null
+                bottomEnd: 'paging',
+                bottomStart: 'pageLength'
             },
             // ordering: true, // Enable ordering (sorting)
             orderCellsTop: true,

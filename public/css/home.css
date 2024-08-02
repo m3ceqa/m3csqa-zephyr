@@ -46,3 +46,34 @@ a:hover {
   max-height: 450px; /* Set the max height for scrolling */
   overflow-y: auto; /* Enable vertical scrolling */
 }
+
+/* Password modal styling */
+.modal-backdrop {
+  background-color: #007bff; /* Adjust the RGBA value to your preferred color and opacity */
+}
+
+.modal-content {
+  border-radius: 8px;
+}
+
+.modal-header, .modal-footer {
+  border: none;
+}
+
+.modal-footer .btn {
+  width: 100%;
+}
+
+.password-feedback {
+  color: red;
+  display: none;
+  margin-top: 10px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
