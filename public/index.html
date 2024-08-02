@@ -34,86 +34,157 @@
     </div> -->
     <div class="container-fluid">
         <div class="table-responsive p-3">
+
+            <!-- Loading icon -->
             <div id="loading" class="text-center">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
                 <p>Loading data...</p>
             </div>
-            <div class="d-grid gap-2 d-md-block mb-2">
-                <button id="filterPreconditions" class="btn btn-primary filter-btn" data-filter="Preconditions" type="button">Preconditions</button>
-                <button id="filterMain" class="btn btn-primary filter-btn" data-filter="Main" type="button">Main</button>
-                <button id="resetFilters" class="btn btn-secondary filter-btn" data-filter="None" type="button">Clear</button>
-                <button id="refreshPageBtn" class="btn btn-dark"><i class="bi bi-arrow-clockwise"></i></button>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Button Group for Filters -->
+                <div class="d-grid gap-2 d-md-block mb-2">
+                    <button id="filterPreconditions" class="btn btn-primary filter-btn" data-filter="Preconditions"
+                        type="button">Preconditions</button>
+                    <button id="filterMain" class="btn btn-primary filter-btn" data-filter="Main"
+                        type="button">Main</button>
+                    <button id="resetFilters" class="btn btn-secondary filter-btn" data-filter="None"
+                        type="button">Clear</button>
+                    <button id="refreshPageBtn" class="btn btn-dark"><i class="bi bi-arrow-clockwise"></i></button>
+                </div>
+
+                <!-- Filter Results Badge -->
+                <div>
+                    <p id="filterResults" class="badge badge-info"></p>
+                </div>
+
+                <!-- Column Customization Dropdown -->
+                <div class="custom-table-control">
+                    <!-- Column Customization Dropdown -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Table Columns
+                        </button>
+                        <ul class="dropdown-menu" id="column-customization-dropdown">
+                            <!-- Options will be populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div>
-                <p id="filterResults" class="badge badge-info"></p>
-            </div>
+
             <table class="table table-striped dataTable" id="data-table" data-order="[]">
                 <thead>
                     <tr id="headersLabels" class="table-dark">
-                        <th scope="col">M3QA ID</th>
-                        <th scope="col">TCM3 ID</th>
-                        <th scope="col">Test Type</th>
-                        <th scope="col">Summary</th>
-                        <th scope="col">QL</th>
-                        <th scope="col">Labels</th>
-                        <th scope="col">Framework</th>
-                        <th scope="col">Folder</th>
-                        <th scope="col">Epic</th>
-                        <th scope="col">AUTO-XXX</th>
-                        <th>Status</th>
-                        <th>OTS</th>
-                        <th>Objective</th>
+                        <th scope="col" aria-colindex="1">M3QA ID</th>
+                        <th scope="col" aria-colindex="2">TCM3 ID</th>
+                        <th scope="col" aria-colindex="3">Testing Purpose</th>
+                        <th scope="col" aria-colindex="4">Summary</th>
+                        <th scope="col" aria-colindex="5">QL</th>
+                        <th scope="col" aria-colindex="6">Labels</th>
+                        <th scope="col" aria-colindex="7">Framework</th>
+                        <th scope="col" aria-colindex="8">Folder</th>
+                        <th scope="col" aria-colindex="9">Epic</th>
+                        <th scope="col" aria-colindex="10">Failure Reason</th>
+                        <th scope="col" aria-colindex="11">Status</th>
+                        <th scope="col" aria-colindex="12">Objective</th>
+                        <th scope="col" aria-colindex="13">Test Type</th>
+                        <th scope="col" aria-colindex="14">Products</th>
+                        <th scope="col" aria-colindex="15">OTS</th>
+                        <th scope="col" aria-colindex="16">Automation Status</th>
+                        <th scope="col" aria-colindex="17">Business Process</th>
+                        <th scope="col" aria-colindex="18">Integrated Product</th>
+                        <th scope="col" aria-colindex="19">State</th>
+                        <th scope="col" aria-colindex="20">Test Technique</th>
+                        <th scope="col" aria-colindex="21">Deployment</th>
+                        <th scope="col" aria-colindex="22">Components</th>
+                        <th scope="col" aria-colindex="23">Issue Type</th>
+                        <th scope="col" aria-colindex="24">Complexity</th>
                     </tr>
 
                     <tr id="searchRow">
                         <!-- Filter for M3QA ID -->
-                        <th><input type="text" class="form-control form-control-sm" placeholder="Search M3QA ID" /></th>
+                        <th aria-colindex="1"><input type="text" class="form-control form-control-sm"
+                                placeholder="Search M3QA ID" /></th>
 
                         <!-- Filter for TCM3 ID -->
-                        <th><input type="text" class="form-control form-control-sm" placeholder="Search TCM3 ID" /></th>
+                        <th aria-colindex="2"><input type="text" class="form-control form-control-sm"
+                                placeholder="Search TCM3 ID" /></th>
 
-                        <!-- Filter for Test Type -->
-                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Test Type" /></th> -->
-                        <th></th>
+                        <!-- Filter for Testing Purpose -->
+                        <th aria-colindex="3"></th>
 
                         <!-- Filter for Summary -->
-                        <th><input type="text" class="form-control form-control-sm" placeholder="Search Summary" /></th>
+                        <th aria-colindex="4"><input type="text" class="form-control form-control-sm"
+                                placeholder="Search Summary" /></th>
 
                         <!-- Filter for Qualification Level -->
-                        <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Qualification Level" /></th> -->
-                        <th></th>
+                        <th aria-colindex="5"></th>
 
                         <!-- Filter for Labels -->
                         <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Labels" /></th> -->
-                        <th></th>
+                        <th aria-colindex="6"></th>
 
                         <!-- Filter for Framework -->
                         <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Framework" /></th> -->
-                        <th></th>
+                        <th aria-colindex="7"></th>
 
                         <!-- Filter for Folders -->
                         <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Folder" /></th> -->
-                        <th></th>
+                        <th aria-colindex="8"></th>
 
                         <!-- Filter for Epic ID -->
                         <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search Epic" /></th> -->
-                        <th></th>
+                        <th aria-colindex="9"></th>
 
                         <!-- Filter for Auto Failure Reason -->
                         <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search AUTO-XXX" /></th> -->
-                        <th></th>
+                        <th aria-colindex="10"></th>
 
                         <!-- Filter for Status -->
-                        <th></th>
+                        <th aria-colindex="11"></th>
+
+                        <!-- Filter for OBJ -->
+                        <th aria-colindex="12"></th>
+
+                        <!-- Filter for Test Type -->
+                        <th aria-colindex="13"></th>
+
+                        <!-- Filter for Products -->
+                        <th aria-colindex="14"></th>
 
                         <!-- Filter for OTS Labels -->
                         <!-- <th><input type="text" class="form-control form-control-sm" placeholder="Search OTS" /></th> -->
-                        <th></th>
+                        <th aria-colindex="15"></th>
 
-                        <!-- Filter for OBJ -->
-                        <th></th>
+                        <!-- Filter for Automation Status -->
+                        <th aria-colindex="16"></th>
+
+                        <!-- Filter for Business Process -->
+                        <th aria-colindex="17"></th>
+
+                        <!-- Filter for Integrated Product -->
+                        <th aria-colindex="18"></th>
+
+                        <!-- Filter for State -->
+                        <th aria-colindex="19"></th>
+
+                        <!-- Filter for Test Technique -->
+                        <th aria-colindex="20"></th>
+
+                        <!-- Filter for Deployment -->
+                        <th aria-colindex="21"></th>
+
+                        <!-- Filter for Components -->
+                        <th aria-colindex="22"></th>
+
+                        <!-- Filter for Issue Type -->
+                        <th aria-colindex="23"></th>
+
+                        <!-- Filter for Complexity -->
+                        <th aria-colindex="24"></th>
                     </tr>
                 </thead>
                 <tbody>

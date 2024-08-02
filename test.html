@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Bootstrap Table</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- DataTables Responsive CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.3/css/responsive.bootstrap5.min.css">
+    <style>
+        /* Custom styles */
+        .custom-table-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .dropdown-menu {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .dataTables_wrapper .row .col-sm-12 {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="custom-table-control">
+            <h2>Customizable Bootstrap Table</h2>
+            <!-- Column Customization Dropdown -->
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Customize Columns
+                </button>
+                <ul class="dropdown-menu" id="column-customization-dropdown">
+                    <!-- Options will be populated dynamically -->
+                </ul>
+            </div>
+        </div>
+        <!-- Table -->
+        <table id="customTable" class="table table-striped table-hover nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Company</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>johndoe@example.com</td>
+                    <td>+1234567890</td>
+                    <td>Company A</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="populateModal('John Doe', 'johndoe@example.com', '+1234567890', 'Company A')">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane Smith</td>
+                    <td>janesmith@example.com</td>
+                    <td>+0987654321</td>
+                    <td>Company B</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="populateModal('Jane Smith', 'janesmith@example.com', '+0987654321', 'Company B')">View</button>
+                    </td>
+                </tr>
+                <!-- More rows as needed -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel">Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Details will be populated dynamically -->
+                    <p><strong>Name:</strong> <span id="modalName"></span></p>
+                    <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                    <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
+                    <p><strong>Company:</strong> <span id="modalCompany"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.3/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.5/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.5/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable with column visibility controls
+            var table = $('#customTable').DataTable({
+                responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'colvis', 'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+
+            // Populate Column Customization Dropdown
+            table.columns().every(function(index) {
+                var column = this;
+                var title = $(column.header()).text();
+                $('#column-customization-dropdown').append(
+                    `<li><a class="dropdown-item" href="#"><input type="checkbox" data-column="${index}" checked> ${title}</a></li>`
+                );
+            });
+
+            // Handle column visibility changes
+            $('#column-customization-dropdown input[type="checkbox"]').on('change', function() {
+                var column = table.column($(this).attr('data-column'));
+                column.visible(!column.visible());
+            });
+
+            // Customize DataTable classes for Bootstrap
+            $('#customTable').addClass('table-hover');
+            $('.dataTables_length').addClass('bs-select');
+        });
+
+        // Function to populate modal with data
+        function populateModal(name, email, phone, company) {
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalEmail').innerText = email;
+            document.getElementById('modalPhone').innerText = phone;
+            document.getElementById('modalCompany').innerText = company;
+        }
+    </script>
+</body>
+</html>

@@ -90,9 +90,8 @@ $(document).ready(function () {
             row.append($("<td></td>").text(values.customFields["Qualification Level"]));
             row.append($("<td></td>").text(values.labels));
             row.append($("<td></td>").text(values.customFields["Framework"]));
+            
             // Check if values.folder is not null before accessing 'id'
-            var folderId = values.folder ? values.folder.id : '';
-            // row.append($("<td></td>").text(folderId));
             row.append(
                 $("<td></td>")
                     .text("Loading...")
@@ -106,8 +105,19 @@ $(document).ready(function () {
                     .text("Loading...")
                     .attr("id", "status-" + index)
             );
-            row.append($("<td></td>").text(values.customFields["One Time Setup"]));
             row.append($("<td></td>").text(values.customFields["Test Objective"]));
+            row.append($("<td></td>").text(values.customFields["Test Type"]));
+            row.append($("<td></td>").text(values.customFields["Product(s)"]));
+            row.append($("<td></td>").text(values.customFields["One Time Setup"]));
+            row.append($("<td></td>").text(values.customFields["Automation Status"]));
+            row.append($("<td></td>").text(values.customFields["Business Process"]));
+            row.append($("<td></td>").text(values.customFields["Integrated Product"]));
+            row.append($("<td></td>").text(values.customFields["State"]));
+            row.append($("<td></td>").text(values.customFields["Test Technique"]));
+            row.append($("<td></td>").text(values.customFields["Deployment Method"]));
+            row.append($("<td></td>").text(values.customFields["Component/s"]));
+            row.append($("<td></td>").text(values.customFields["Issue Type"]));
+            row.append($("<td></td>").text(values.customFields["Automation Complexity"]));
 
             tableBody.append(row); // Add the row to the table body
 
@@ -134,9 +144,13 @@ $(document).ready(function () {
             orderCellsTop: true,
             columnDefs: [
                 {
+                    targets: [5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+                    visible: false
+                },
+                {
                     targets: '_all', // Apply sorting to headers inside #headersLabels
                     orderable: true // Enable sorting on these headers
-                }, 
+                },
                 {
                     targets: '#searchRow th', // Target the search row headers
                     orderable: false // Disable sorting for search row headers
@@ -144,37 +158,187 @@ $(document).ready(function () {
             ]
         });
 
-        // Populate dropdown options for Testing Purpose column
-        createDropdownFilter(dataTable, 2, 2, 'Select Testing Purpose');
+        // Populate Column Customization Dropdown
+        dataTable.columns().every(function(index) {
+            var column = this;
+            var title = $(column.header()).text();
+            var checked = column.visible() ? 'checked' : ''; // Determine if the checkbox should be checked
+            $('#column-customization-dropdown').append(
+                `<li><a class="dropdown-item" href="#"><input type="checkbox" data-column="${index}" ${checked}> ${title}</a></li>`
+            );
+        });
 
-        // Populate dropdown options for Qualification Level column
-        var qualificationLevels = ['', '2', '3', '4', '6', '7']; // Hard-coded options
-        // createDropdownFilterWithOptions(dataTable, 4, 4, 'Select QL', qualificationLevels);
-        createDropdownFilterWithComma(dataTable, 4, 4, 'Select QL');
+        // Handle column visibility changes
+        // $('#column-customization-dropdown input[type="checkbox"]').on('change', function() {
+        //     var column = dataTable.column($(this).attr('data-column'));
+        //     column.visible(!column.visible());
+        //     updateSearchFilters(column); // Update filters when column visibility changes
+        // });
 
-        // Populate dropdown options for Labels
-        createDropdownFilterWithComma(dataTable, 5, 5, 'Select Labels');
+        // Initialize filters on table load
+        initializeFilters(dataTable);
 
-        // Populate dropdown options for Framework column
-        createDropdownFilter(dataTable, 6, 6, 'Select Framework');
+        // Reinitialize filters when column visibility changes
+        $('#column-customization-dropdown input[type="checkbox"]').on('change', function() {
+            var columnIndex = $(this).attr('data-column');
+            var isVisible = $(this).is(':checked');
+            dataTable.column(columnIndex).visible(isVisible);
+            initializeFilters(dataTable); // Reapply filters after visibility change
+        });
 
-        // Populate dropdown options for Folder column
-        createDropdownFilter(dataTable, 7, 7, 'Select Folder');
+        function removeExistingFilters() {
+            // Remove existing dropdowns from the column headers
+            $('#searchRow select').remove();
+        }        
 
-        // Populate dropdown options for Epic column
-        createDropdownFilterWithLink(dataTable, 8, 8, 'Select Epic');
+        function isColumnVisible(dataTable, columnIndex) {
+            return dataTable.column(columnIndex).visible();
+        }
 
-        // Populate dropdown options for AUTO-XXX column
-        createDropdownFilter(dataTable, 9, 9, 'Select Failure');
+        function createDropdownFilter(dataTable, columnIndex, headerIndex, placeholder) {
+            var column = dataTable.column(columnIndex);
+            var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
+                .appendTo($('#searchRow th[aria-colindex="' + (headerIndex + 1) + '"]'))
+                .on('change', function() {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val + '$' : '^$', true, false).draw();
+                });
+    
+            column.data().unique().sort().each(function(d) {
+                select.append('<option value="' + d + '">' + d + '</option>');
+            });
+        }
+    
+        function createDropdownFilterWithComma(dataTable, columnIndex, headerIndex, placeholder) {
+            var column = dataTable.column(columnIndex);
+            var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
+                .appendTo($('#searchRow th[aria-colindex="' + (headerIndex + 1) + '"]'))
+                .on('change', function() {
+                    var val = $(this).val();
+                    if (val === '') {
+                        column.search('^$', true, false).draw();
+                    } else {
+                        var escapedVal = $.fn.dataTable.util.escapeRegex(val);
+                        column.search(escapedVal, true, false).draw();
+                    }
+                });
+    
+            var uniqueValues = new Set();
+            column.data().each(function(data) {
+                data.split(',').forEach(item => {
+                    uniqueValues.add(item.trim());
+                });
+            });
+    
+            Array.from(uniqueValues).sort().forEach(function(value) {
+                select.append('<option value="' + value + '">' + value + '</option>');
+            });
+        }
+    
+        function createDropdownFilterWithLink(dataTable, columnIndex, headerIndex, placeholder) {
+            var column = dataTable.column(columnIndex);
+            var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
+                .appendTo($('#searchRow th[aria-colindex="' + (headerIndex + 1) + '"]'))
+                .on('change', function() {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    column.search(val ? '^' + val + '$' : '^$', true, false).draw();
+                });
+    
+            var uniqueValues = new Set();
+            column.data().each(function(data) {
+                var text = $("<div>").html(data).text();
+                uniqueValues.add(text.trim());
+            });
+    
+            Array.from(uniqueValues).sort().forEach(function(value) {
+                select.append('<option value="' + value + '">' + value + '</option>');
+            });
+        }
+    
+        function initializeFilters(dataTable) {
+            removeExistingFilters();
+    
+            $('#headersLabels th').each(function() {
+                var colIndex = $(this).attr('aria-colindex');
+                if (colIndex) {
+                    colIndex = parseInt(colIndex, 10) - 1;
+    
+                    if (isColumnVisible(dataTable, colIndex)) {
+                        switch (colIndex) {
+                            case 2:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Testing Purpose');
+                                break;
+                            case 4:
+                                createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select QL');
+                                break;
+                            case 5:
+                                createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Labels');
+                                break;
+                            case 6:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Framework');
+                                break;
+                            case 7:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Folder');
+                                break;
+                            case 8:
+                                createDropdownFilterWithLink(dataTable, colIndex, colIndex, 'Select Epic');
+                                break;
+                            case 9:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Failure');
+                                break;
+                            case 10:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Status');
+                                break;
+                            case 11:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select OBJ');
+                                break;
+                            case 12:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Type');
+                                break;
+                            case 13:
+                                createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Product');
+                                break;
+                            case 14:
+                                createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select OTS');
+                                break;
+                            case 15:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Status');
+                                break;
+                            case 16:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Process');
+                                break;
+                            case 17:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Integration');
+                                break;
+                            case 18:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select State');
+                                break;
+                            case 19:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Technique');
+                                break;
+                            case 20:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Deployment');
+                                break;
+                            case 21:
+                                createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Component');
+                                break;
+                            case 22:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Type');
+                                break;
+                            case 23:
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Complexity');
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            });
+        }    
 
-        // Populate dropdown options for Status column
-        createDropdownFilter(dataTable, 10, 10, 'Select Status');
-
-        // Populate dropdown options for OTS
-        createDropdownFilterWithComma(dataTable, 11, 11, 'Select OTS');
-
-        // Populate dropdown options for Objective column
-        createDropdownFilter(dataTable, 12, 12, 'Select OBJ');
+        // Customize DataTable classes for Bootstrap
+        // $('#data-table').addClass('table-hover');
+        $('.dataTables_length').addClass('bs-select');
 
         // Apply individual column searching
         $('#searchRow input').on('keyup change', function () {
@@ -224,100 +388,6 @@ $(document).ready(function () {
         });
     }
 
-    function createDropdownFilter(dataTable, columnIndex, headerIndex, placeholder) {
-        var column = dataTable.column(columnIndex); // Get the specified column
-        var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
-            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
-            .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Include blank filter
-            });
-    
-        column.data().unique().sort().each(function (d, j) {
-            select.append('<option value="' + d + '">' + d + '</option>');
-        });
-    }
-
-    function createDropdownFilterWithComma(dataTable, columnIndex, headerIndex, placeholder) {
-        var column = dataTable.column(columnIndex); // Get the specified column
-    
-        // Create the dropdown and append it to the column header
-        var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
-            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')'))
-            .on('change', function () {
-                var val = $(this).val();
-                if (val === '') {
-                    // Show all rows when the blank option is selected
-                    column.search('^$', true, false).draw(); // Use '^$' for empty values
-                } else {
-                    var escapedVal = $.fn.dataTable.util.escapeRegex(val);
-                    // Search for values that contain the selected option
-                    column.search(escapedVal, true, false).draw();
-                }
-            });
-    
-        // Collect unique values from the column, splitting on commas, and removing duplicates
-        var uniqueValues = new Set();
-    
-        column.data().each(function (data) {
-            var items = data.split(','); // Split the data on commas
-            items.forEach(item => {
-                uniqueValues.add(item.trim()); // Trim whitespace and add to set
-            });
-        });
-    
-        // Convert set to sorted array and populate the dropdown
-        Array.from(uniqueValues).sort().forEach(function (value) {
-            select.append('<option value="' + value + '">' + value + '</option>');
-        });
-    }    
-
-    function createDropdownFilterWithLink(dataTable, columnIndex, headerIndex, placeholder) {
-        var column = dataTable.column(columnIndex); // Get the specified column
-        var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
-            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
-            .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                column.search(val ? '^' + val + '$' : '^$', true, false).draw(); // Exact match search
-            });
-    
-        // Collect unique Epic Key values
-        var uniqueValues = new Set();
-    
-        column.data().each(function (data) {
-            // Extract the text content from the link element if it's HTML
-            var text = $("<div>").html(data).text();
-            uniqueValues.add(text.trim()); // Trim whitespace and add to set
-        });
-    
-        // Convert set to sorted array and populate the dropdown
-        Array.from(uniqueValues).sort().forEach(function (value) {
-            select.append('<option value="' + value + '">' + value + '</option>');
-        });
-    }
-
-    function createDropdownFilterWithOptions(dataTable, columnIndex, headerIndex, placeholder, options) {
-        var column = dataTable.column(columnIndex); // Get the specified column
-        var select = $('<select class="form-control form-control-sm"><option value="">' + placeholder + '</option></select>')
-            .appendTo($('#searchRow th:nth-child(' + (headerIndex + 1) + ')')) // Append dropdown to specified column header
-            .on('change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-    
-                if (val === '') {
-                    // Filter for blanks
-                    column.search('^$', true, false).draw();
-                } else {
-                    // Filter for selected value
-                    column.search(val).draw();
-                }
-            });
-    
-        // Add options to the dropdown
-        $.each(options, function (index, value) {
-            select.append('<option value="' + value + '">' + value + '</option>');
-        });
-    }
-
     // Fetch folder name from the cache
     function fetchFolderName(folder, index) {
         var folderName = '';
@@ -353,14 +423,5 @@ $(document).ready(function () {
         // Change the text of the filterResults element
         $('#filterResults').text('Filter: ' + $(this).data('filter'));
     });
-
-    // Search using top search bar
-    // $("#myInput").on("keyup", function () {
-    //     var value = $(this).val().toLowerCase();
-    //     $("#data-table tr").filter(function () {
-    //         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    //     });
-    // });
-
     
 });

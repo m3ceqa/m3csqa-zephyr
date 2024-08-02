@@ -41,3 +41,8 @@ tr a {
 a:hover {
   text-decoration: none;
 }
+
+.custom-table-control .dropdown-menu {
+  max-height: 450px; /* Set the max height for scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
