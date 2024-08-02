@@ -85,7 +85,7 @@ $(document).ready(function () {
 
             row.append($("<td></td>").append(m3qa_link));
             row.append($("<td></td>").append(tcm3_link));
-            row.append($("<td></td>").text(values.customFields["Test Type"]));
+            row.append($("<td></td>").text(values.customFields["Testing Purpose"]));
             row.append($("<td></td>").text(values.name));
             row.append($("<td></td>").text(values.customFields["Qualification Level"]));
             row.append($("<td></td>").text(values.labels));
@@ -144,8 +144,8 @@ $(document).ready(function () {
             ]
         });
 
-        // Populate dropdown options for Test Type column
-        createDropdownFilter(dataTable, 2, 2, 'Select Test Type');
+        // Populate dropdown options for Testing Purpose column
+        createDropdownFilter(dataTable, 2, 2, 'Select Testing Purpose');
 
         // Populate dropdown options for Qualification Level column
         var qualificationLevels = ['', '2', '3', '4', '6', '7']; // Hard-coded options
@@ -190,6 +190,7 @@ $(document).ready(function () {
             if (currentFilter === filterValue) {
                 // If already filtered, reset to show all records
                 dataTable.column(7).search('').draw();
+                $('#filterResults').text('Filter: None');
             } else {
                 // Otherwise, apply the filter
                 dataTable.column(7).search(filterValue).draw();
@@ -204,6 +205,7 @@ $(document).ready(function () {
             if (notMainFilterActive) {
                 // Reset filter to show all records
                 dataTable.column(7).search('').draw();
+                $('#filterResults').text('Filter: None');
                 notMainFilterActive = false;
             } else {
                 // Apply filter to show records not containing 'M3 - Preconditions'
