@@ -120,8 +120,8 @@ $(document).ready(function () {
 
             row.append($("<td></td>").append(m3qa_link));
             row.append($("<td></td>").append(tcm3_link));
-            row.append($("<td></td>").text(values.customFields["Testing Purpose"]));
             row.append($("<td></td>").text(values.name));
+            row.append($("<td></td>").text(values.customFields["Testing Purpose"]));
             row.append($("<td></td>").text(values.customFields["Qualification Level"]));
             row.append($("<td></td>").text(values.labels));
             row.append($("<td></td>").text(values.customFields["Framework"]));
@@ -193,21 +193,34 @@ $(document).ready(function () {
         });
 
         // Populate Column Customization Dropdown
+        const columnOptions = []; // Array to store column details
+
         dataTable.columns().every(function(index) {
             var column = this;
             var title = $(column.header()).text();
             var checked = column.visible() ? 'checked' : ''; // Determine if the checkbox should be checked
-            $('#column-customization-dropdown').append(
-                `<li><a class="dropdown-item" href="#"><input type="checkbox" data-column="${index}" ${checked}> ${title}</a></li>`
-            );
+            
+            // Push the column details into the array
+            columnOptions.push({
+                index: index,
+                title: title,
+                checked: checked
+            });
         });
 
-        // Handle column visibility changes
-        // $('#column-customization-dropdown input[type="checkbox"]').on('change', function() {
-        //     var column = dataTable.column($(this).attr('data-column'));
-        //     column.visible(!column.visible());
-        //     updateSearchFilters(column); // Update filters when column visibility changes
-        // });
+        // Sort the array by title
+        columnOptions.sort(function(a, b) {
+            return a.title.localeCompare(b.title); // Sort alphabetically
+        });
+
+        // Append sorted options to the dropdown
+        columnOptions.forEach(function(option) {
+            $('#column-customization-dropdown').append(
+                `<li><a class="dropdown-item" href="#">
+                    <input type="checkbox" data-column="${option.index}" ${option.checked}> ${option.title}
+                </a></li>`
+            );
+        });
 
         // Initialize filters on table load
         initializeFilters(dataTable);
@@ -299,67 +312,88 @@ $(document).ready(function () {
     
                     if (isColumnVisible(dataTable, colIndex)) {
                         switch (colIndex) {
-                            case 2:
+                            case 3:
+                                // Filter for Testing Purpose
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Testing Purpose');
                                 break;
                             case 4:
+                                // Filter for Qualification Level
                                 createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select QL');
                                 break;
                             case 5:
+                                // Filter for Labels
                                 createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Labels');
                                 break;
                             case 6:
+                                // Filter for Framework
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Framework');
                                 break;
                             case 7:
+                                // Filter for Folders
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Folder');
                                 break;
                             case 8:
+                                // Filter for Epic Key
                                 createDropdownFilterWithLink(dataTable, colIndex, colIndex, 'Select Epic');
                                 break;
                             case 9:
+                                // Filter for Failure Reason
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Failure');
                                 break;
                             case 10:
+                                // Filter for Test Case Status
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Status');
                                 break;
                             case 11:
+                                // Filter for Test Objective
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select OBJ');
                                 break;
                             case 12:
+                                // Filter for Test Type
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Type');
                                 break;
                             case 13:
+                                // Filter for Product
                                 createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Product');
                                 break;
                             case 14:
+                                // Filter for One Time Setup
                                 createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select OTS');
                                 break;
                             case 15:
+                                // Filter for Test Case Status
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Status');
                                 break;
                             case 16:
+                                // Filter for Business Process
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Process');
                                 break;
                             case 17:
+                                // Filter for Integrated Product
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Integration');
                                 break;
                             case 18:
+                                // Filter for State
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select State');
                                 break;
                             case 19:
+                                // Filter for Test Technique
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Technique');
                                 break;
                             case 20:
+                                // Filter for Deployment Method
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Deployment');
                                 break;
                             case 21:
+                                // Filter for Component/s
                                 createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Component');
                                 break;
                             case 22:
-                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Type');
+                                // Filter for Issue Type
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Issue Type');
                                 break;
                             case 23:
+                                // Filter for Automation Complexity
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Complexity');
                                 break;
                             default:
@@ -372,12 +406,26 @@ $(document).ready(function () {
 
         // Customize DataTable classes for Bootstrap
         // $('#data-table').addClass('table-hover');
-        $('.dataTables_length').addClass('bs-select');
+        // $('.dataTables_length').addClass('bs-select');
 
         // Apply individual column searching
         $('#searchRow input').on('keyup change', function () {
             var index = $(this).closest('th').index();
-            dataTable.column(index).search(this.value).draw();
+            var searchTerm = this.value;
+
+            // Modify the search term to allow spaces, commas, and semicolons
+            var regexTerm = searchTerm
+                .split(/[;, ]+|(?=TCM3)|(?=M3QA)/) // Split by comma or semicolon
+                .map(function (term) {
+                    return '\\b' + term.trim().replace(/\s+/g, '\\s*') + '\\b';
+                })
+                .join('|');
+
+            // Use the regex term to search
+            dataTable
+                .column(index)
+                .search(regexTerm, true, false) // Enable regex search
+                .draw();
         });
 
         // Button click to filter M3 - Preconditions folder
