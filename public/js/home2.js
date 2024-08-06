@@ -65,10 +65,15 @@ $(document).ready(function () {
     var folderApiUrl = "/api/folder";
     fetchAndCacheResponseData(folderApiUrl, folderCache);
 
-    // Cache Folders
+    // Cache Status
     var statusesCache = {};
     var statusesApiUrl = "/api/statuses";
     fetchAndCacheResponseData(statusesApiUrl, statusesCache);
+
+    // Cache Priorities
+    var prioritiesCache = {};
+    var prioritiesApiUrl = "/api/priorities";
+    fetchAndCacheResponseData(prioritiesApiUrl, prioritiesCache);
 
     function fetchAndCacheResponseData(ApiUrl, cacheData) {
         $.ajax({
@@ -153,6 +158,12 @@ $(document).ready(function () {
             row.append($("<td></td>").text(values.customFields["Component/s"]));
             row.append($("<td></td>").text(values.customFields["Issue Type"]));
             row.append($("<td></td>").text(values.customFields["Automation Complexity"]));
+            row.append(
+                $("<td></td>")
+                    .text("Loading...")
+                    .attr("id", "priority-" + index)
+            );
+            row.append($("<td></td>").text(values.customFields["Test Environment"]));
 
             tableBody.append(row); // Add the row to the table body
 
@@ -163,6 +174,7 @@ $(document).ready(function () {
                 $("#folder-" + index).text("No folder");
             }
             fetchStatusName(values.status, index)
+            fetchPriorityName(values.priority, index)
         });
 
         // Initialize DataTables with sorting enabled and individual column searching
@@ -178,7 +190,7 @@ $(document).ready(function () {
             orderCellsTop: true,
             columnDefs: [
                 {
-                    targets: [5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+                    targets: [5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],
                     visible: false
                 },
                 {
@@ -396,17 +408,19 @@ $(document).ready(function () {
                                 // Filter for Automation Complexity
                                 createDropdownFilter(dataTable, colIndex, colIndex, 'Select Complexity');
                                 break;
+                            case 24:
+                                // Filter for Priority
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Priority');
+                            case 25:
+                                // Filter for Test Environment
+                                createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Test Environment');
                             default:
                                 break;
                         }
                     }
                 }
             });
-        }    
-
-        // Customize DataTable classes for Bootstrap
-        // $('#data-table').addClass('table-hover');
-        // $('.dataTables_length').addClass('bs-select');
+        }
 
         // Apply individual column searching
         $('#searchRow input').on('keyup change', function () {
@@ -496,6 +510,20 @@ $(document).ready(function () {
 
         // Update the table row with the folder name
         $("#status-" + index).text(statusName || "Status not found");
+    }
+
+    // Fetch priority name from the cache
+    function fetchPriorityName(priority, index) {
+        var priorityName = '';
+        $.each(prioritiesCache.values, function (idx, priorityItem) {
+            if (priorityItem.id === priority.id) {
+                priorityName = priorityItem.name;
+                return false; // Exit the loop once found
+            }
+        });
+
+        // Update the table row with the folder name
+        $("#priority-" + index).text(priorityName || "Priority not found");
     }
 
     // Update badge based on Filtered (Main/Precondition/Reset)
