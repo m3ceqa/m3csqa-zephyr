@@ -30,7 +30,8 @@
 
 <body>
     <!-- Password Modal -->
-    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true"
+        data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -51,17 +52,43 @@
         </div>
     </div>
 
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">M3CSQA</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cycles.html">Test Cycles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown link
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav> -->
+
+    <!-- Homepage -->
     <div class="container-fluid hidden" id="mainContent">
         <div class="table-responsive p-3">
-
-            <!-- Loading icon -->
-            <div id="loading" class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p>Loading data...</p>
-            </div>
-
             <div class="d-flex justify-content-between align-items-top">
                 <!-- Button Group for Filters -->
                 <div class="d-grid gap-2 d-md-block">
@@ -123,6 +150,7 @@
                         <th scope="col" aria-colindex="24">Automation Complexity</th>
                         <th scope="col" aria-colindex="25">Priority</th>
                         <th scope="col" aria-colindex="26">Test Environment</th>
+                        <th scope="col" aria-colindex="27">Test Area</th>
                     </tr>
 
                     <tr id="searchRow">
@@ -212,11 +240,22 @@
 
                         <!-- Filter for Test Environment -->
                         <th aria-colindex="26"></th>
+
+                        <!-- Filter for Test Area -->
+                        <th aria-colindex="27"></th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Loading icon -->
+        <div id="loading" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading data...</p>
         </div>
     </div>
 </body>

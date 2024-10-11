@@ -3,160 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Bootstrap Table</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Bulk JSON Update by ID with DataTables and Modals</title>
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-    <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.3/css/responsive.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <style>
-        /* Custom styles */
-        .custom-table-control {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
-        .dropdown-menu {
-            max-height: 200px;
-            overflow-y: auto;
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
-        .dataTables_wrapper .row .col-sm-12 {
-            overflow-x: auto;
+        button:hover {
+            background-color: #45a049;
+        }
+        #output {
+            white-space: pre-wrap;
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <div class="custom-table-control">
-            <h2>Customizable Bootstrap Table</h2>
-            <!-- Column Customization Dropdown -->
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    Customize Columns
-                </button>
-                <ul class="dropdown-menu" id="column-customization-dropdown">
-                    <!-- Options will be populated dynamically -->
-                </ul>
-            </div>
-        </div>
-        <!-- Table -->
-        <table id="customTable" class="table table-striped table-hover nowrap" style="width:100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Company</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
-                    <td>johndoe@example.com</td>
-                    <td>+1234567890</td>
-                    <td>Company A</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="populateModal('John Doe', 'johndoe@example.com', '+1234567890', 'Company A')">View</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jane Smith</td>
-                    <td>janesmith@example.com</td>
-                    <td>+0987654321</td>
-                    <td>Company B</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="populateModal('Jane Smith', 'janesmith@example.com', '+0987654321', 'Company B')">View</button>
-                    </td>
-                </tr>
-                <!-- More rows as needed -->
-            </tbody>
-        </table>
-    </div>
+    <h1>Bulk Update JSON Data by ID</h1>
+    <table id="jsonTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- JSON data will be loaded here -->
+        </tbody>
+    </table>
+    <button id="applyUpdatesBtn">Apply Updates</button>
+    <h2>Updated JSON Output</h2>
+    <div id="output"></div>
 
     <!-- Modal -->
-    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewModalLabel">Details</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit JSON Data</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Details will be populated dynamically -->
-                    <p><strong>Name:</strong> <span id="modalName"></span></p>
-                    <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-                    <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
-                    <p><strong>Company:</strong> <span id="modalCompany"></span></p>
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAge" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="editAge" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                        <input type="hidden" id="editId">
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.3/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.5/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.5/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         $(document).ready(function() {
-            // Initialize DataTable with column visibility controls
-            var table = $('#customTable').DataTable({
-                responsive: true,
-                dom: 'Bfrtip',
-                buttons: [
-                    'colvis', 'copy', 'csv', 'excel', 'pdf', 'print'
+            // Sample JSON data
+            let jsonData = [
+                { "id": 1, "name": "Alice", "age": 30, "email": "alice@example.com" },
+                { "id": 2, "name": "Bob", "age": 25, "email": "bob@example.com" },
+                { "id": 3, "name": "Charlie", "age": 35, "email": "charlie@example.com" }
+            ];
+
+            // Initialize DataTable
+            const table = $('#jsonTable').DataTable({
+                data: jsonData,
+                columns: [
+                    { data: 'id', title: 'ID' },
+                    { data: 'name', title: 'Name' },
+                    { data: 'age', title: 'Age' },
+                    { data: 'email', title: 'Email' },
+                    {
+                        data: null,
+                        title: 'Edit',
+                        defaultContent: '<button class="btn btn-sm btn-primary editBtn">Edit</button>',
+                        orderable: false
+                    }
                 ]
             });
 
-            // Populate Column Customization Dropdown
-            table.columns().every(function(index) {
-                var column = this;
-                var title = $(column.header()).text();
-                $('#column-customization-dropdown').append(
-                    `<li><a class="dropdown-item" href="#"><input type="checkbox" data-column="${index}" checked> ${title}</a></li>`
-                );
+            // Handle Edit button click
+            $('#jsonTable tbody').on('click', '.editBtn', function() {
+                const rowData = table.row($(this).parents('tr')).data();
+                $('#editId').val(rowData.id);
+                $('#editName').val(rowData.name);
+                $('#editAge').val(rowData.age);
+                $('#editEmail').val(rowData.email);
+                $('#editModal').modal('show');
             });
 
-            // Handle column visibility changes
-            $('#column-customization-dropdown input[type="checkbox"]').on('change', function() {
-                var column = table.column($(this).attr('data-column'));
-                column.visible(!column.visible());
+            // Save changes from the modal
+            $('#saveChangesBtn').click(function() {
+                const id = $('#editId').val();
+                const name = $('#editName').val();
+                const age = $('#editAge').val();
+                const email = $('#editEmail').val();
+
+                const updatedRowData = { id: parseInt(id), name, age: parseInt(age), email };
+
+                // Update DataTable
+                const rowIndex = table.row(function(idx, data) {
+                    return data.id === parseInt(id);
+                }).index();
+                
+                table.row(rowIndex).data(updatedRowData).draw(false);
+
+                $('#editModal').modal('hide');
             });
 
-            // Customize DataTable classes for Bootstrap
-            $('#customTable').addClass('table-hover');
-            $('.dataTables_length').addClass('bs-select');
+            // Apply updates button click handler
+            $('#applyUpdatesBtn').click(function() {
+                const updatedData = table.rows().data().toArray();
+                jsonData = updatedData;
+                $('#output').text(JSON.stringify(updatedData, null, 2));
+                alert('JSON data updated successfully!');
+            });
         });
-
-        // Function to populate modal with data
-        function populateModal(name, email, phone, company) {
-            document.getElementById('modalName').innerText = name;
-            document.getElementById('modalEmail').innerText = email;
-            document.getElementById('modalPhone').innerText = phone;
-            document.getElementById('modalCompany').innerText = company;
-        }
     </script>
 </body>
 </html>

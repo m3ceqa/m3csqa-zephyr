@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
             },
             params: {
                 projectKey: 'M3QA',
-                maxResults: 2000
+                maxResults: 2500
             }
         });
         res.json(response.data);

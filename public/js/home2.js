@@ -53,6 +53,7 @@ $(document).ready(function () {
         success: function (data) {
             populateTable(data.values);
             $('#loading').hide();
+            console.log("Data cached:", data)
         },
         error: function () {
             alert("Failed to fetch data from the API.");
@@ -74,6 +75,11 @@ $(document).ready(function () {
     var prioritiesCache = {};
     var prioritiesApiUrl = "/api/priorities";
     fetchAndCacheResponseData(prioritiesApiUrl, prioritiesCache);
+
+    // Cache Epic Keys / Test Areas
+    var testAreasCache = {};
+    var testAreaApiUrl = "/api/testArea"
+    fetchAndCacheResponseData(testAreaApiUrl, testAreasCache);
 
     function fetchAndCacheResponseData(ApiUrl, cacheData) {
         $.ajax({
@@ -164,6 +170,12 @@ $(document).ready(function () {
                     .attr("id", "priority-" + index)
             );
             row.append($("<td></td>").text(values.customFields["Test Environment"]));
+            row.append(
+                $("<td></td>")
+                    .text("Loading...")
+                    .attr("id", "testArea-" + index)
+            );
+            // row.append($("<td></td>").text(values.links.issues[0].issueId));
 
             tableBody.append(row); // Add the row to the table body
 
@@ -173,8 +185,10 @@ $(document).ready(function () {
             } else {
                 $("#folder-" + index).text("No folder");
             }
+
             fetchStatusName(values.status, index)
             fetchPriorityName(values.priority, index)
+            fetchTestAreaName(values, index)
         });
 
         // Initialize DataTables with sorting enabled and individual column searching
@@ -190,7 +204,7 @@ $(document).ready(function () {
             orderCellsTop: true,
             columnDefs: [
                 {
-                    targets: [5,6,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],
+                    targets: [6,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25], // 5, 9
                     visible: false
                 },
                 {
@@ -414,6 +428,9 @@ $(document).ready(function () {
                             case 25:
                                 // Filter for Test Environment
                                 createDropdownFilterWithComma(dataTable, colIndex, colIndex, 'Select Test Environment');
+                            case 26:
+                                // Filter for Test Area
+                                createDropdownFilter(dataTable, colIndex, colIndex, 'Select Test Area');
                             default:
                                 break;
                         }
@@ -524,6 +541,26 @@ $(document).ready(function () {
 
         // Update the table row with the folder name
         $("#priority-" + index).text(priorityName || "Priority not found");
+    }
+
+    // Fetch test area name from the cache
+    function fetchTestAreaName(testArea, index) {
+        var testAreaName = '';
+        // Ensure testArea has links and issues
+        if (testArea.links && testArea.links.issues && testArea.links.issues.length > 0) {
+            const issueId = testArea.links.issues[0].issueId; // Get the issueId from the first issue
+
+            $.each(testAreasCache.issues, function (idx, testAreaItem) {
+                // Match by issueId
+                if (testAreaItem.id === String(issueId)) { // Ensure type matches
+                    testAreaName = testAreaItem.fields.summary;
+                    return false; // Exit the loop once found
+                }
+            });
+        }
+
+        // Update the table row with the folder name
+        $("#testArea-" + index).text(testAreaName || "Test Area not found");
     }
 
     // Update badge based on Filtered (Main/Precondition/Reset)

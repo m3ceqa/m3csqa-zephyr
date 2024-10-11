@@ -59,6 +59,7 @@ const folderRoutes = require('../routes/folders'); // Adjust the path as per you
 const foldersRoutes = require('../routes/folder');
 const statusesRoutes = require('../routes/statuses');
 const prioritiesRoutes = require('../routes/priorities');
+const testAreaRoutes = require('../routes/testArea');
 
 // Routes
 app.use('/api/testcases', testcaseRoutes);
@@ -66,6 +67,7 @@ app.use('/api/folders', folderRoutes);
 app.use('/api/folder', foldersRoutes);
 app.use('/api/statuses', statusesRoutes);
 app.use('/api/priorities', prioritiesRoutes);
+app.use('/api/testArea', testAreaRoutes);
 
 // Serve index.html from the root
 app.get('*', (req, res) => {
