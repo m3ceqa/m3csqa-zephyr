@@ -175,7 +175,6 @@ $(document).ready(function () {
                     .text("Loading...")
                     .attr("id", "testArea-" + index)
             );
-            // row.append($("<td></td>").text(values.links.issues[0].issueId));
 
             tableBody.append(row); // Add the row to the table body
 
@@ -560,7 +559,7 @@ $(document).ready(function () {
         }
 
         // Update the table row with the folder name
-        $("#testArea-" + index).text(testAreaName || "Test Area not found");
+        $("#testArea-" + index).text(testAreaName || "No traceability found");
     }
 
     // Update badge based on Filtered (Main/Precondition/Reset)
